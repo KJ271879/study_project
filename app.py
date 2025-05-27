@@ -42,3 +42,8 @@ for day in days:
             if task_data["done"]:
                 st.markdown(f"~~{task_data['task']}~~")
             else:
+                st.markdown(task_data['task'])
+        with col3:
+            if st.button("삭제", key=f"del_{day}_{i}"):
+                delete_task(day, i)
+                st.experimental_rerun()
