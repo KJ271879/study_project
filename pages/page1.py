@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # This line is correct!
 
 st.title("간단한 가계부 프로그램")
 
