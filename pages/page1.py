@@ -45,8 +45,14 @@ if not df.empty:
     # 막대 그래프 그리기
     fig, ax = plt.subplots(figsize=(10, 5))
     width = 0.4  # 바 너비
-    ax.bar(pivot_df["날짜"] - pd.Timedelta(days=width/2), pivot_df.get("수입", 0), width=width, label="수입", color="green")
-    ax.bar(pivot_df["날짜"] + pd.Timedelta(days=width/2), pivot_df.get("지출", 0), width=width, label="지출", color="red")
+
+    # Check if '수입' column exists before plotting
+    if '수입' in pivot_df.columns:
+        ax.bar(pivot_df["날짜"] - pd.Timedelta(days=width/2), pivot_df["수입"], width=width, label="수입", color="green")
+    
+    # Check if '지출' column exists before plotting
+    if '지출' in pivot_df.columns:
+        ax.bar(pivot_df["날짜"] + pd.Timedelta(days=width/2), pivot_df["지출"], width=width, label="지출", color="red")
 
     ax.set_xlabel("날짜")
     ax.set_ylabel("금액")
