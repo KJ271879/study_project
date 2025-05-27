@@ -9,9 +9,10 @@ days = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요
 if "tasks" not in st.session_state:
     st.session_state.tasks = {day: [] for day in days}
 
-def add_task(day, task):
-    if task:
-        st.session_state.tasks[day].append({"task": task, "done": False})
+# 함수 정의
+def add_task(day, task_text):
+    if task_text:
+        st.session_state.tasks[day].append({"task": task_text, "done": False})
 
 def toggle_done(day, idx):
     st.session_state.tasks[day][idx]["done"] = not st.session_state.tasks[day][idx]["done"]
@@ -19,33 +20,27 @@ def toggle_done(day, idx):
 def delete_task(day, idx):
     st.session_state.tasks[day].pop(idx)
 
-# 요일별 할 일 관리
+# 요일별 인터페이스
 for day in days:
     st.header(day)
 
-    with st.expander(f"{day} 할 일 추가"):
-        input_key = f"input_{day}"
-        new_task = st.text_input(f"{day}에 추가할 할 일", key=input_key)
-        if st.button(f"{day} 추가", key=f"add_btn_{day}"):
-            add_task(day, new_task)
-            # rerun으로 입력창 초기화
-            st.experimental_rerun()
+    # 입력창과 버튼
+    task_input = st.text_input(f"{day}에 추가할 할 일", key=f"input_{day}")
+    if st.button(f"{day}에 추가", key=f"add_btn_{day}"):
+        add_task(day, task_input)
 
     # 할 일 목록 출력
-    tasks = st.session_state.tasks[day]
-    for i, task in enumerate(tasks):
-        col1, col2, col3 = st.columns([0.05, 0.8, 0.15])
+    for idx, task in enumerate(st.session_state.tasks[day]):
+        col1, col2, col3 = st.columns([0.07, 0.75, 0.18])
         with col1:
-            done = st.checkbox("", value=task["done"], key=f"{day}_done_{i}")
-            if done != task["done"]:
-                toggle_done(day, i)
-                st.experimental_rerun()
+            done_key = f"{day}_done_{idx}"
+            if st.checkbox("", value=task["done"], key=done_key):
+                if not task["done"]:
+                    toggle_done(day, idx)
         with col2:
-            if task["done"]:
-                st.markdown(f"~~{task['task']}~~")
-            else:
-                st.markdown(task["task"])
+            text = f"~~{task['task']}~~" if task["done"] else task["task"]
+            st.markdown(text)
         with col3:
-            if st.button("삭제", key=f"{day}_del_{i}"):
-                delete_task(day, i)
-                st.experimental_rerun()
+            if st.button("삭제", key=f"{day}_del_{idx}"):
+                delete_task(day, idx)
+                st.experimental_rerun()  # 삭제 후 화면 반영 (이건 대부분 문제 없음)
