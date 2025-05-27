@@ -18,7 +18,10 @@ def toggle_done(day, idx):
     st.session_state.tasks[day][idx]["done"] = not st.session_state.tasks[day][idx]["done"]
 
 def delete_task(day, idx):
-    st.session_state.tasks[day].pop(idx)
+    # 안전하게 새 리스트로 재구성
+    st.session_state.tasks[day] = [
+        task for i, task in enumerate(st.session_state.tasks[day]) if i != idx
+    ]
 
 # 요일별 인터페이스
 for day in days:
@@ -33,14 +36,13 @@ for day in days:
     for idx, task in enumerate(st.session_state.tasks[day]):
         col1, col2, col3 = st.columns([0.07, 0.75, 0.18])
         with col1:
-            done_key = f"{day}_done_{idx}"
-            if st.checkbox("", value=task["done"], key=done_key):
-                if not task["done"]:
-                    toggle_done(day, idx)
+            done = st.checkbox("", value=task["done"], key=f"{day}_done_{idx}")
+            if done != task["done"]:
+                toggle_done(day, idx)
         with col2:
             text = f"~~{task['task']}~~" if task["done"] else task["task"]
             st.markdown(text)
         with col3:
             if st.button("삭제", key=f"{day}_del_{idx}"):
                 delete_task(day, idx)
-                st.experimental_rerun()  # 삭제 후 화면 반영 (이건 대부분 문제 없음)
+                st.info(f"{task['task']} 항목이 삭제되었습니다.")
