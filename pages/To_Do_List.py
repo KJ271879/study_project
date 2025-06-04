@@ -66,6 +66,7 @@ if choice == "하루":
         with col3:
             if st.button(f"삭제", key=f'day_delete_{i}'):
                 delete_task("day", i)
+                # 삭제 후, 페이지 새로 고침을 위해 상태 업데이트
                 st.experimental_rerun()  # 삭제 후 페이지 새로 고침
 
 # 일주일 페이지
