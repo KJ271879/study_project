@@ -66,8 +66,8 @@ if choice == "하루":
         with col3:
             if st.button(f"삭제", key=f'day_delete_{i}'):
                 delete_task("day", i)
-                # 삭제 후, 페이지 새로 고침을 위해 상태 업데이트
-                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
+                st.success(f"할 일이 삭제되었습니다!")  # 삭제 성공 메시지 출력
+                # 페이지 새로 고침 없이 바로 갱신됨
 
 # 일주일 페이지
 elif choice == "일주일":
@@ -86,8 +86,8 @@ elif choice == "일주일":
         with col3:
             if st.button(f"삭제", key=f'week_delete_{i}'):
                 delete_task("week", i)
-                # 삭제 후, 페이지 새로 고침을 위해 상태 업데이트
-                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
+                st.success(f"할 일이 삭제되었습니다!")  # 삭제 성공 메시지 출력
+                # 페이지 새로 고침 없이 바로 갱신됨
 
 # 월별 페이지
 elif choice == "월별":
@@ -106,4 +106,5 @@ elif choice == "월별":
         with col3:
             if st.button(f"삭제", key=f'month_delete_{i}'):
                 delete_task("month", i)
-                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
+                st.success(f"할 일이 삭제되었습니다!")  # 삭제 성공 메시지 출력
+                # 페이지 새로 고침 없이 바로 갱신됨
