@@ -1,48 +1,83 @@
 import streamlit as st
+import datetime
 
-st.title("주간 할 일 목록 앱")
+# 할 일 목록을 저장하는 전역 딕셔너리
+todos = {
+    'day': [],
+    'week': [],
+    'month': []
+}
 
-# 요일 리스트
-days = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"]
+# 함수: 할 일 추가
+def add_task(timeframe):
+    task = st.text_input(f"할 일 추가 ({timeframe})", "")
+    if st.button(f"{timeframe} 할 일 추가"):
+        if task:
+            todos[timeframe].append({'task': task, 'completed': False})
+            st.success(f"{timeframe} 할 일이 추가되었습니다!")
+        else:
+            st.warning("할 일을 입력해 주세요.")
 
-# 세션 상태 초기화
-if "tasks" not in st.session_state:
-    st.session_state.tasks = {day: [] for day in days}
+# 함수: 할 일 완료 체크
+def complete_task(timeframe, index):
+    todos[timeframe][index]['completed'] = True
 
-# 함수 정의
-def add_task(day, task_text):
-    if task_text:
-        st.session_state.tasks[day].append({"task": task_text, "done": False})
+# 함수: 할 일 삭제
+def delete_task(timeframe, index):
+    todos[timeframe].pop(index)
 
-def toggle_done(day, idx):
-    st.session_state.tasks[day][idx]["done"] = not st.session_state.tasks[day][idx]["done"]
+# 메인 페이지
+st.title("To-Do 리스트")
+menu = ["하루", "일주일", "월별"]
+choice = st.sidebar.selectbox("목록 선택", menu)
 
-def delete_task(day, idx):
-    # 안전하게 새 리스트로 재구성
-    st.session_state.tasks[day] = [
-        task for i, task in enumerate(st.session_state.tasks[day]) if i != idx
-    ]
+# 오늘 날짜
+today = datetime.date.today()
 
-# 요일별 인터페이스
-for day in days:
-    st.header(day)
-
-    # 입력창과 버튼
-    task_input = st.text_input(f"{day}에 추가할 할 일", key=f"input_{day}")
-    if st.button(f"{day}에 추가", key=f"add_btn_{day}"):
-        add_task(day, task_input)
-
-    # 할 일 목록 출력
-    for idx, task in enumerate(st.session_state.tasks[day]):
-        col1, col2, col3 = st.columns([0.07, 0.75, 0.18])
+# 하루 페이지
+if choice == "하루":
+    st.header(f"오늘 할 일 ({today})")
+    add_task("day")
+    for i, todo in enumerate(todos['day']):
+        col1, col2, col3 = st.columns([6, 1, 1])
         with col1:
-            done = st.checkbox("", value=task["done"], key=f"{day}_done_{idx}")
-            if done != task["done"]:
-                toggle_done(day, idx)
+            st.checkbox(todo['task'], value=todo['completed'], key=f'day_{i}', on_change=complete_task, args=('day', i))
         with col2:
-            text = f"~~{task['task']}~~" if task["done"] else task["task"]
-            st.markdown(text)
+            if todo['completed']:
+                st.text('완료됨')
         with col3:
-            if st.button("삭제", key=f"{day}_del_{idx}"):
-                delete_task(day, idx)
-                st.info(f"{task['task']} 항목이 삭제되었습니다.")
+            if st.button(f"삭제", key=f'day_delete_{i}'):
+                delete_task("day", i)
+                st.experimental_rerun()
+
+# 일주일 페이지
+elif choice == "일주일":
+    st.header(f"이번 주 할 일 (Week {today.strftime('%U')})")
+    add_task("week")
+    for i, todo in enumerate(todos['week']):
+        col1, col2, col3 = st.columns([6, 1, 1])
+        with col1:
+            st.checkbox(todo['task'], value=todo['completed'], key=f'week_{i}', on_change=complete_task, args=('week', i))
+        with col2:
+            if todo['completed']:
+                st.text('완료됨')
+        with col3:
+            if st.button(f"삭제", key=f'week_delete_{i}'):
+                delete_task("week", i)
+                st.experimental_rerun()
+
+# 월별 페이지
+elif choice == "월별":
+    st.header(f"이번 달 할 일 (Month {today.month})")
+    add_task("month")
+    for i, todo in enumerate(todos['month']):
+        col1, col2, col3 = st.columns([6, 1, 1])
+        with col1:
+            st.checkbox(todo['task'], value=todo['completed'], key=f'month_{i}', on_change=complete_task, args=('month', i))
+        with col2:
+            if todo['completed']:
+                st.text('완료됨')
+        with col3:
+            if st.button(f"삭제", key=f'month_delete_{i}'):
+                delete_task("month", i)
+                st.experimental_rerun()
