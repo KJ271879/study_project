@@ -86,6 +86,7 @@ elif choice == "일주일":
         with col3:
             if st.button(f"삭제", key=f'week_delete_{i}'):
                 delete_task("week", i)
+                # 삭제 후, 페이지 새로 고침을 위해 상태 업데이트
                 st.experimental_rerun()  # 삭제 후 페이지 새로 고침
 
 # 월별 페이지
