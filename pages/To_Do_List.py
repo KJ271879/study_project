@@ -25,12 +25,11 @@ def add_task(timeframe):
 # 할 일 완료 체크
 def complete_task(timeframe, index):
     st.session_state.todos[timeframe][index]['completed'] = True
-    st.experimental_rerun()
 
 # 할 일 삭제
 def delete_task(timeframe, index):
-    st.session_state.todos[timeframe].pop(index)
-    st.experimental_rerun()
+    # 해당 항목 삭제
+    del st.session_state.todos[timeframe][index]
 
 # 주차 기간 계산
 def get_week_period(date):
@@ -67,6 +66,7 @@ if choice == "하루":
         with col3:
             if st.button(f"삭제", key=f'day_delete_{i}'):
                 delete_task("day", i)
+                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
 
 # 일주일 페이지
 elif choice == "일주일":
@@ -85,6 +85,7 @@ elif choice == "일주일":
         with col3:
             if st.button(f"삭제", key=f'week_delete_{i}'):
                 delete_task("week", i)
+                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
 
 # 월별 페이지
 elif choice == "월별":
@@ -103,3 +104,4 @@ elif choice == "월별":
         with col3:
             if st.button(f"삭제", key=f'month_delete_{i}'):
                 delete_task("month", i)
+                st.experimental_rerun()  # 삭제 후 페이지 새로 고침
