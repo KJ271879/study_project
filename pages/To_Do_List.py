@@ -32,13 +32,27 @@ def delete_task(timeframe, index):
     st.session_state.todos[timeframe].pop(index)
     st.experimental_rerun()
 
+# 주차 기간 계산
+def get_week_period(date):
+    start_date = date - datetime.timedelta(days=date.weekday())  # 주 시작일 (월요일)
+    end_date = start_date + datetime.timedelta(days=6)  # 주 종료일 (일요일)
+    return start_date, end_date
+
+# 월별 기간 계산
+def get_month_period(date):
+    start_date = date.replace(day=1)  # 이번 달 1일
+    # 다음 달 1일을 구하고, 하루를 빼면 이번 달 마지막 날이 나옵니다.
+    next_month = start_date.replace(day=28) + datetime.timedelta(days=4)
+    end_date = next_month - datetime.timedelta(days=next_month.day)
+    return start_date, end_date
+
 # 메인 페이지
 st.title("To-Do 리스트")
-menu = ["Day", "Weekend", "Month"]
+menu = ["하루", "일주일", "월별"]
 choice = st.sidebar.selectbox("목록 선택", menu)
 
 # 하루 페이지
-if choice == "Day":
+if choice == "하루":
     st.header(f"오늘 할 일 ({today})")
     add_task("day")
     for i, todo in enumerate(st.session_state.todos['day']):
@@ -55,8 +69,9 @@ if choice == "Day":
                 delete_task("day", i)
 
 # 일주일 페이지
-elif choice == "Weekend":
-    st.header(f"이번 주 할 일 (Week {today.strftime('%U')})")
+elif choice == "일주일":
+    start_date, end_date = get_week_period(today)
+    st.header(f"이번 주 할 일 ({start_date} ~ {end_date})")
     add_task("week")
     for i, todo in enumerate(st.session_state.todos['week']):
         col1, col2, col3 = st.columns([6, 1, 1])
@@ -72,8 +87,9 @@ elif choice == "Weekend":
                 delete_task("week", i)
 
 # 월별 페이지
-elif choice == "Month":
-    st.header(f"이번 달 할 일 (Month {today.month})")
+elif choice == "월별":
+    start_date, end_date = get_month_period(today)
+    st.header(f"이번 달 할 일 ({start_date} ~ {end_date})")
     add_task("month")
     for i, todo in enumerate(st.session_state.todos['month']):
         col1, col2, col3 = st.columns([6, 1, 1])
