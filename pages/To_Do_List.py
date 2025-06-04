@@ -34,11 +34,11 @@ def delete_task(timeframe, index):
 
 # 메인 페이지
 st.title("To-Do 리스트")
-menu = ["하루", "일주일", "월별"]
+menu = ["Day", "Weekend", "Month"]
 choice = st.sidebar.selectbox("목록 선택", menu)
 
 # 하루 페이지
-if choice == "하루":
+if choice == "Day":
     st.header(f"오늘 할 일 ({today})")
     add_task("day")
     for i, todo in enumerate(st.session_state.todos['day']):
@@ -55,7 +55,7 @@ if choice == "하루":
                 delete_task("day", i)
 
 # 일주일 페이지
-elif choice == "일주일":
+elif choice == "Weekend":
     st.header(f"이번 주 할 일 (Week {today.strftime('%U')})")
     add_task("week")
     for i, todo in enumerate(st.session_state.todos['week']):
@@ -72,7 +72,7 @@ elif choice == "일주일":
                 delete_task("week", i)
 
 # 월별 페이지
-elif choice == "월별":
+elif choice == "Month":
     st.header(f"이번 달 할 일 (Month {today.month})")
     add_task("month")
     for i, todo in enumerate(st.session_state.todos['month']):
